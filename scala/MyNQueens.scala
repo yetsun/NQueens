@@ -18,7 +18,7 @@ object MyNQueens extends App{
    * (This is due to the the nature scala list, i.e. it's easier to append to the head)
    * The list value is the column index.
    */
-  def queens(size: Int): Set[List[Int]] = {
+  def queens(boardSize: Int): Set[List[Int]] = {
 
     def q(row: Int): Set[List[Int]] = {
       if (row == 0) {
@@ -26,9 +26,9 @@ object MyNQueens extends App{
       } else {
         for {
           oneSolution <- q(row - 1)
-          col <- 0 until size
-          if isSafe(col, oneSolution)
-        } yield col :: oneSolution
+          newQueenCol <- 0 until boardSize
+          if isSafe(newQueenCol, oneSolution)
+        } yield newQueenCol :: oneSolution
       }
     }
 
@@ -37,21 +37,18 @@ object MyNQueens extends App{
      * check if it is not the same col, not diagonal
      * not the same row, implied
      */
-    def isSafe(col: Int, solution: List[Int]): Boolean = {
-      val row = solution.length
-      val queenRowCols = row-1 to 0 by -1 zip solution
+    def isSafe(newQueenCol: Int, solution: List[Int]): Boolean = {
+      val newQueenRow = solution.length
+      val queenRowCols = newQueenRow - 1 to 0 by -1 zip solution
 
-      queenRowCols.forall(
-        x => {
-          x match {
-            case (row1: Int, col1: Int) => col1 != col && math.abs(col1 - col) != row - row1
-          }
-        }
-      )
+      queenRowCols forall {
+        case (oldQueenRow: Int, oldQueenCol: Int) => oldQueenCol != newQueenCol && math.abs(oldQueenCol - newQueenCol) != newQueenRow - oldQueenRow
+      }
+
     }
 
 
-    q(size)
+    q(boardSize)
 
   }
 
